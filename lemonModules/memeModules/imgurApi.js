@@ -7,7 +7,7 @@ var https = isMocking ? undefined : require('https'),
 
 const getJson = isMocking ? require('./imgurMock.js') : async function(url){
     var resBuffer = [];
-    return new Promise((resolve)=>{
+    return new Promise((resolve, reject)=>{
         https.get(url, res=>{
             res.on('data', chunk=>resBuffer.push(chunk));
             res.on('end',()=>{
@@ -16,7 +16,7 @@ const getJson = isMocking ? require('./imgurMock.js') : async function(url){
                     resolve(JSON.parse(resultJSONStr)); //Apparently imgur places in \ in-between literally everything
                 }
                 catch(e){
-                    console.error('For some reason, this couldn\'t be parsed into json:', resultJSONStr);
+                    reject({ error: 'jsonError', exception: e });
                 }
             });
         });
@@ -25,12 +25,25 @@ const getJson = isMocking ? require('./imgurMock.js') : async function(url){
 
 
 //Returns a promise that contains the resulting gallery JSON
-function loadGallery(galleryId){
+async function loadGallery(galleryId, useLegacyApi){
     try{
         if(!module.exports.token) console.error('I need an imgur api token so I can look at galleries! Add one by putting in the module\'s "token" variable');
         if(!galleryId) console.error('I need a gallery ID to bring back a list! Please supply one');
 
-        return getJson('https://api.imgur.com/3/album/'+galleryId+'?client_id='+module.exports.token);
+        if(useLegacyApi){
+            // The v3 api failed for some reason assuming we got here, or the account associated with the API key doesn't match with the gallery owner
+            const res = await getJson("https://api.imgur.com/post/v1/albums/"+galleryId+"?include=media&client_id="+module.exports.token);
+
+            // The legacy api data is formatted differently; to retain compatibility, return the data in a format `syncedAlbum.prototype.sync` can read it:
+            return {
+                data: {
+                    images: res.media.map(e => {
+                        return { link:e.url, description: e.metadata.description }
+                    })
+                }
+            };
+        }
+        else return getJson('https://api.imgur.com/3/album/'+galleryId+'?client_id='+module.exports.token);
     }
     catch(e){
         console.error(e);
@@ -45,6 +58,7 @@ function syncedAlbum(refObj = {}, id, syncAlbumEvery=(60 * 1000 * 60)){
     this.imgurCache = { data:{ images:[] } }; //If just a manual sync is desired (e.g changing the reference object instead of syncing from remote), the cache exists to insert the previous results.
     this.id = id;
     this.syncRoutine;
+    this.useLegacyApi = false;
 
     if(this.id){
         if(syncAlbumEvery > -1) this.syncRoutine = setInterval(()=>{this.sync()}, syncAlbumEvery);
@@ -56,15 +70,36 @@ syncedAlbum.prototype.sync = async function(localSyncOnly = false){
     var newJson;
 
     if(!localSyncOnly && this.id){
-        newJson = await loadGallery(this.id);
-        if(newJson && newJson.status != 200){
+        try{
+            newJson = await loadGallery(this.id, this.useLegacyApi);
+        }
+        catch(e){
+            // 99% chance the new api quietly failed because the account associated with the api key wasn't the same one as the account with requested gallery and returned HTML. Try it again but with the legacy api
+            try{
+                console.error("Failed to sync with the new API, trying the old one... (", e.exception.message, ")");
+                if(!this.useLegacyApi){
+                    this.useLegacyApi = true;
+                    newJson = await loadGallery(this.id, true);
+                }
+                else throw e; //This should only happen if the legacy api failed
+
+            }
+            catch(e){
+                // If it's not that I have no idea, something completely alien ._.
+                console.error("I could not sync anything for " + this.id + ": ", e );
+            }
+        }
+
+        if(newJson && !this.useLegacyApi && newJson.status != 200){
             console.error("I could not sync anthing for "+this.id+"...", newJson.status,newJson.data?.error);
             newJson = undefined;
         }
+        else if(newJson && this.useLegacyApi && newJson.data?.images)
+            console.log("("+new Date()+") Successfully synced album with id: ",this.id, " [Legacy]");
         else console.log("("+new Date()+") Successfully synced album with id: ",this.id);
     }
 
-    if(!newJson) newJson = this.imgurCache;
+    if(!newJson) newJson = this.imgurCache; //If newJson remains undefined, just re-sort the cache
     else this.imgurCache = newJson;
 
     //Now for the actual syncing process - I'd like to make sure it's synced a couple of ways, first if an image was removed from the url, and second if it was hard-coded into the bot.

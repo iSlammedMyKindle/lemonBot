@@ -1,7 +1,6 @@
 //Made by iSlammedMyKindle in 2021!
 //A stateful interface to use ELIZA - a chatbot / therapist from the 1960s. Considering its going to live in discord, situations with the chatbot will probably be very entertaining XD
-var loadEliza = require('./loadEliza');
-loadEliza.load();
+const eliza = require('elizabot');
 
 var userJoin = [
     'Just asserted themselves into',
@@ -82,15 +81,11 @@ function leaveCheck(stateData, m){
 
 function onFind(stateData, member, msg, args){
     stateData.lastMsg = msg;
-    if(!loadEliza.eliza){
-        msg.reply('ELIZA hasn\'t loaded up all the way yet; sorry :/');
-        return {endAll:true,cooldownHit:true}
-    }
     
     if(!stateData.eliza){
         stateData.guildId = msg.guild?.id || 'dm';
-        if(!initilizedKeywords) loadEliza.eliza.initializeWords(customResponses);
-        stateData.eliza = new loadEliza.eliza.bot(customResponses);
+        if(!initilizedKeywords) eliza.initializeWords(customResponses);
+        stateData.eliza = new eliza.bot(customResponses);
         stateData.history = {};
         //This shouldn't happen anymore because this parameter is always required in new code
         // if(!args.length)
