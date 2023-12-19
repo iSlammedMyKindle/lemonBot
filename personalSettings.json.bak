@@ -1,0 +1,11 @@
+{
+    "commandSymbol":"!",
+    "token":"NzY2MTE0MTA0NzcxMjE1Mzkw.X4epXA.Q8BgV6FJWkxSNNfcz6waP_9w_yU",
+    "deployCommandsOnLaunch":false,
+    "testLocations":["766116219890696244"],
+    "reservedCommands":{"766116219890696244":["private"]},
+    "roleCommands":{"766116655767748618":["staff"]},
+    "external":{
+        "imgur":{"token":"5988410548b1bba"}
+    }
+}

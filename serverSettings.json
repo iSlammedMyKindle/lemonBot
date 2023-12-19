@@ -1,0 +1,57 @@
+{
+    "commandFileDirectories":[
+        "./cmdPub",
+        "./cmdPriv",
+        "./stateful"
+    ],
+    "messages":{
+        "help":"I have a lot of commands!",
+        "botActivity":"memes & shenaniganz! https://lemonbot.net",
+        "commandDisabled":"aww, looks like this command is turned off :/",
+        "cooldownStrike":"*huff*, one second; I need a breather. Give me %s!",
+        "generalException":"Ow... I hit my head there >_< - sorry about that, the command just crashed. if you can please send this to my dad: `%s`",
+        "commandProcessException":"OOF, that hurt >_< - it looks like something broke before I could even launch the command, please tell my dad this for me: `%s`"
+    },
+    "deleteMessages":[
+        "one sec",
+        "hang tight",
+        "come to papa",
+        "doing the thing",
+        "hmm",
+        "where was I",
+        "one momento",
+        "let's see here",
+        "u read this lol",
+        "telling Rylan this is a Jojo reference",
+        "hibye",
+        "working on it"
+    ],
+    "helpEmoji":{
+        "admin":"⛑️",
+        "game":"🎲",
+        "meme":"🎭",
+        "text":"🗯️",
+        "tool":"🔧",
+        "unknown":"🔸"
+    },
+    "statTracker":false,
+    "commandDeployer": false,
+    "webServer":{
+        "port":3000,
+        "contentHeaders":[
+            ["Access-Control-Allow-Origin","*"],
+            ["Content-type","application/json"]
+        ]
+    },
+    "legacyCommandSystem":false,
+    "textResponses":true,
+    "external":{
+        "imgur":{
+            "albums":{
+                "lemon":"Tayyhjt",
+                "ohno":"aTVv8rZ",
+                "rylan":"igFj6QP"
+            }
+        }
+    }
+}

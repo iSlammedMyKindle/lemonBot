@@ -1,0 +1,14 @@
+{
+    "commandSymbol":"!",
+    "token":"",
+    "clientId":"",
+    "clientSecret": "",
+    "authedUsers":[],
+    "otp":"",
+    "deployCommandsOnLaunch":true,
+    "testLocations":[],
+    "reservedCommands":{},
+    "external":{
+        "imgur":{"token":""}
+    }
+}

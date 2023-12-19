@@ -1,0 +1,16 @@
+{
+    "name": "lemon-bot",
+    "version": "3.8.1",
+    "main": "lemon.js",
+    "scripts": {
+        "start": "node lemon.js"
+    },
+    "dependencies": {
+        "bot-cooldown": "^1.2.1",
+        "discord.js": "^14.13.0",
+        "otp": "^1.1.0"
+    },
+    "engines": {
+        "node": "19.8.1"
+    }
+}
