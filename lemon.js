@@ -166,6 +166,7 @@ client.on('messageCreate', async msg=>{
     //Commands should be easier to run though since we're using associative arrays to determine if the command is even there
     //Check to see what command we got if at all:
     try{
+        if (msg == null) return;
         var [actualCommand,args] = parseCommand(msg.content);
         var guildId = msg.channel.guild?.id || 'dm';
 
