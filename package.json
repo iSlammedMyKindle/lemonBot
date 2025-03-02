@@ -1,6 +1,6 @@
 {
     "name": "lemon-bot",
-    "version": "3.9.0",
+    "version": "3.9.1",
     "main": "lemon.js",
     "scripts": {
         "start": "node lemon.js"
