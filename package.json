@@ -6,10 +6,10 @@
         "start": "node lemon.js"
     },
     "dependencies": {
-        "bot-cooldown": "^1.2.1",
-        "discord.js": "^14.13.0",
+        "bot-cooldown": "^1.2.4",
+        "discord.js": "^14.18.0",
         "elizabot": "github:iSlammedMyKindle/elizabot-js",
-        "otp": "^1.1.0"
+        "otp": "^1.1.2"
     },
     "engines": {
         "node": "19.8.1"
